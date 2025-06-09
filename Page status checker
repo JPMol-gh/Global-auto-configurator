@@ -1,0 +1,42 @@
+import { useEffect, useState } from "react"; import { Card, CardContent } from "@/components/ui/card"; import { Input } from "@/components/ui/input"; import { Button } from "@/components/ui/button"; import { AlertTriangle, CheckCircle } from "lucide-react";
+
+export default function GitHubPagesChecker() { const [username, setUsername] = useState("jpmol-gh"); const [project, setProject] = useState("Global-auto-configurator"); const [status, setStatus] = useState(null); const [checking, setChecking] = useState(false);
+
+const checkStatus = async () => { setChecking(true); try { const url = https://${username}.github.io/${project}/; const response = await fetch(url, { mode: "no-cors" }); setStatus({ reachable: true, url }); } catch (error) { setStatus({ reachable: false }); } finally { setChecking(false); } };
+
+return ( <div className="max-w-xl mx-auto p-6 space-y-4"> <h2 className="text-2xl font-bold">GitHub Pages Checker</h2> <div className="flex flex-col gap-2"> <Input placeholder="GitHub Username" value={username} onChange={(e) => setUsername(e.target.value)} /> <Input placeholder="Projectnaam" value={project} onChange={(e) => setProject(e.target.value)} /> <Button onClick={checkStatus} disabled={checking}> {checking ? "Bezig met controleren..." : "Controleer site"} </Button> </div>
+
+{status && (
+    <Card className="mt-4">
+      <CardContent className="flex items-center gap-4 p-4">
+        {status.reachable ? (
+          <CheckCircle className="text-green-500 w-6 h-6" />
+        ) : (
+          <AlertTriangle className="text-red-500 w-6 h-6" />
+        )}
+        <div>
+          {status.reachable ? (
+            <>
+              <p className="text-green-700 font-semibold">
+                ✅ Site bereikbaar
+              </p>
+              <a
+                href={status.url}
+                className="underline text-blue-600"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {status.url}
+              </a>
+            </>
+          ) : (
+            <p className="text-red-600">❌ Site niet bereikbaar</p>
+          )}
+        </div>
+      </CardContent>
+    </Card>
+  )}
+</div>
+
+); }
+
